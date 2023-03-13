@@ -1,0 +1,49 @@
+class Process:
+    def __init__(self, name, estimated_run_time):
+        self.name = name
+        self.estimated_run_time = estimated_run_time
+        self.waiting_time = 0
+        self.priority = 1
+    
+    def __repr__(self):
+        return f'{self.name} ({self.priority})'
+    
+    def wait(self):
+        self.waiting_time += 1
+        self.update_priority()
+    
+    def update_priority(self):
+        self.priority = 1 + self.waiting_time / self.estimated_run_time
+    
+    def run(self):
+        print(f'{self.name} is running')
+        self.estimated_run_time -= 1
+
+
+def main():
+    processes = []
+    num_processes = int(input('Enter the number of processes: '))
+    for i in range(num_processes):
+        name = input(f'Enter name of process {i + 1}: ')
+        estimated_run_time = int(input(f'Enter estimated run time of process {i + 1}: '))
+        process = Process(name, estimated_run_time)
+        processes.append(process)
+    
+    gantt_chart = []
+    time = 0
+    while processes:
+        processes.sort(key=lambda x: x.priority)
+        process = processes.pop(0)
+        gantt_chart.append(process.name)
+        print(f'Time: {time}, Running: {process}, Queue: {processes}')
+        process.run()
+        time += 1
+        for p in processes:
+            p.wait()
+    
+    print('Gantt chart:', ' -> '.join(gantt_chart))
+
+
+if __name__ == '__main__':
+    main()
+3
